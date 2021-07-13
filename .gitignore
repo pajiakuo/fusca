@@ -17,8 +17,8 @@ _site/
 logs/*
 target
 logs
-authority_impl/target
-authority_facade/target
+fusca-impl/target
+fusca-facade/target
 *.DS_Store
 
 .idea

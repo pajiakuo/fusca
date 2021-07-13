@@ -59,7 +59,7 @@ public class WsSendMessageProcessor implements NettyRequestProcessor {
             //发送自己同步消息
             //发送给销售
             //保存消息到db
-            syncSendClientMessageToAllServer(webSocketHeadPackHead,request);
+            asyncSendClientMessageToAllServer(webSocketHeadPackHead,request);
         }else if(SourceEnum.OP_USER.getSource().equals(webSocketHeadPackHead.getSource())){
             //发送给集群中的自己 （多端同步）
             //发送给消息结收者 根据消息中发送给谁
@@ -80,49 +80,59 @@ public class WsSendMessageProcessor implements NettyRequestProcessor {
     }
 
 
-//    public void asyncSendClientMessageToAllServer(SideSynchronizationHead webSocketHeadPackHead ,MessagePack request){
-//        if (CollectionUtil.isNotEmpty(nettyBootStrap.getSuccessAddrList().get())){
-//            for (String address:nettyBootStrap.getSuccessAddrList().get()){
-//                try {
-//                    MessagePack messagePack = MessagePack.createAsyncRequestCommand(RequestCode.SIDE_SYNC_CLIENT,webSocketHeadPackHead);
-//                    List<String> excludeClientIds = Lists.newArrayList();
-//                    excludeClientIds.add(webSocketHeadPackHead.getClientId());
-//                    webSocketHeadPackHead.setExcludeClientIds(excludeClientIds);
-//                    messagePack.setBeginTimestamp(request.getBeginTimestamp());
-//                    messagePack.setBody(request.getBody());
-//                    messagePack.setVersion(request.getVersion());
-//                    messagePack.setExtFields(request.getExtFields());
-//                    messagePack.setResponseType(request.getResponseType());
-//                    messagePack.setMessageId(request.getMessageId());
-//                    nettyBootStrap.getNettyRemotingClient().invokeAsync(address,messagePack,3000,new InvokeCallback(){
-//                        @Override
-//                        public void operationComplete(ResponseFuture responseFuture) {
-//                            if (!responseFuture.isSendRequestOK()){
-//                                log.warn("async send ClientMessage to "+address+" fail"+messagePack.toString());
-//                            }else {
-//
-//                            }
-//                        }
-//                    });
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                } catch (RemotingConnectException e) {
-//                    e.printStackTrace();
-//                } catch (RemotingTooMuchRequestException e) {
-//                    e.printStackTrace();
-//                } catch (RemotingTimeoutException e) {
-//                    e.printStackTrace();
-//                } catch (RemotingSendRequestException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        }else {
-//            log.warn("no server can send async message");
-//        }
-//
-//
-//    }
+    /**
+     * 异步发送
+     * @param webSocketHeadPackHead
+     * @param request
+     */
+    public void asyncSendClientMessageToAllServer(SideSynchronizationHead webSocketHeadPackHead ,MessagePack request){
+        if (CollectionUtil.isNotEmpty(nettyBootStrap.getSuccessAddrList().get())){
+            for (String address:nettyBootStrap.getSuccessAddrList().get()){
+                try {
+                    MessagePack messagePack = MessagePack.createAsyncRequestCommand(RequestCode.SIDE_SYNC_CLIENT,webSocketHeadPackHead);
+                    List<String> excludeClientIds = Lists.newArrayList();
+                    excludeClientIds.add(webSocketHeadPackHead.getClientId());
+                    webSocketHeadPackHead.setExcludeClientIds(excludeClientIds);
+                    messagePack.setBeginTimestamp(request.getBeginTimestamp());
+                    messagePack.setBody(request.getBody());
+                    messagePack.setVersion(request.getVersion());
+                    messagePack.setExtFields(request.getExtFields());
+                    messagePack.setResponseType(ResponseTypeEnum.DEFAULT.getResponseType());
+                    messagePack.setMessageId(request.getMessageId());
+                    nettyBootStrap.getNettyRemotingClient().invokeAsync(address,messagePack,3000,new InvokeCallback(){
+                        @Override
+                        public void operationComplete(ResponseFuture responseFuture) {
+                            if (!responseFuture.isSendRequestOK()){
+                                log.warn("async send ClientMessage to "+address+" fail"+messagePack.toString());
+                            }else {
+                                log.info("async send ClientMessage to "+address+" success");
+                            }
+                        }
+                    });
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (RemotingConnectException e) {
+                    e.printStackTrace();
+                } catch (RemotingTooMuchRequestException e) {
+                    e.printStackTrace();
+                } catch (RemotingTimeoutException e) {
+                    e.printStackTrace();
+                } catch (RemotingSendRequestException e) {
+                    e.printStackTrace();
+                }
+            }
+        }else {
+            log.warn("no server can send async message");
+        }
 
+
+    }
+
+    /**
+     * 同步发送
+     * @param webSocketHeadPackHead
+     * @param request
+     */
     public void syncSendClientMessageToAllServer(SideSynchronizationHead webSocketHeadPackHead ,MessagePack request){
         if (CollectionUtil.isNotEmpty(nettyBootStrap.getSuccessAddrList().get())){
             for (String address:nettyBootStrap.getSuccessAddrList().get()){

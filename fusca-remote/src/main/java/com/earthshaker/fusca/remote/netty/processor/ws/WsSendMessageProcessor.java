@@ -135,7 +135,7 @@ public class WsSendMessageProcessor implements NettyRequestProcessor {
                     messagePack.setBody(request.getBody());
                     messagePack.setVersion(request.getVersion());
                     messagePack.setExtFields(request.getExtFields());
-                    messagePack.setResponseType(request.getResponseType());
+                    messagePack.setResponseType(ResponseTypeEnum.DEFAULT.getResponseType());
                     messagePack.setMessageId(request.getMessageId());
                     nettyBootStrap.getNettyRemotingClient().invokeSync(address,messagePack,3000);
                 } catch (InterruptedException e) {

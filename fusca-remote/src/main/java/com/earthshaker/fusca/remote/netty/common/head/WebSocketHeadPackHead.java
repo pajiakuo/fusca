@@ -4,12 +4,14 @@ import com.earthshaker.fusca.remote.exception.RemotingCommandException;
 import com.earthshaker.fusca.remote.netty.common.PackHead;
 import com.google.common.base.Strings;
 
+import java.io.Serializable;
+
 /**
  * @Author: zhubo
  * @Description
  * @Date: 2021/7/6 3:53 下午
  */
-public class WebSocketHeadPackHead implements PackHead {
+public class WebSocketHeadPackHead implements PackHead, Serializable {
 
     private String clientId;
 

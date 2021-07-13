@@ -35,16 +35,19 @@ public class Test2 {
         WebSocketHeadPackHead webSocketHeadPackHead0 = new WebSocketHeadPackHead();
         webSocketHeadPackHead0.setSessionId(sessionId);
         webSocketHeadPackHead0.setSource(3);
-        webSocketHeadPackHead0.setMessageId(UUID.fastUUID().toString());
-        webSocketHeadPackHead0.setBeginTimestamp(System.currentTimeMillis());
+
         webSocketHeadPackHead0.setClientId(UUID.fastUUID().toString());
         MessagePack messagePack0 = MessagePack.createAsyncRequestCommand(RequestCode.HEART_BEAT_WS,webSocketHeadPackHead0);
         messagePack0.setResponseType(1);
+        messagePack0.setMessageId(UUID.fastUUID().toString());
+        messagePack0.setBeginTimestamp(System.currentTimeMillis());
         messagePack0.setBody("heartbeat");
         System.out.println(JSON.toJSONString(messagePack0));
         MessagePack messagePack1 = MessagePack.createAsyncRequestCommand(RequestCode.SEND_MESSAGE_WS,webSocketHeadPackHead0);
         messagePack1.setResponseType(1);
         messagePack1.setBody("游客消息多端同步");
+        messagePack1.setMessageId(UUID.fastUUID().toString());
+        messagePack1.setBeginTimestamp(System.currentTimeMillis());
         System.out.println(JSON.toJSONString(messagePack1));
 
 

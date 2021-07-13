@@ -71,11 +71,11 @@ public class WsSendMessageProcessor implements NettyRequestProcessor {
 
         WebSocketCommonResponseHeadPackHead packHead = new WebSocketCommonResponseHeadPackHead();
         packHead.setResponseTimestamp(System.currentTimeMillis());
-        packHead.setMessageId(webSocketHeadPackHead.getMessageId());
         packHead.setSource(webSocketHeadPackHead.getSource());
         packHead.setSessionId(webSocketHeadPackHead.getSessionId());
         MessagePack messagePack0 = MessagePack.createResponseCommand(RemotingSysResponseCode.SUCCESS,packHead,"", ResponseTypeEnum.TEXT_WEB_SOCKET_FRAME.getResponseType());
         messagePack0.setBeginTimestamp(request.getBeginTimestamp());
+        messagePack0.setMessageId(request.getMessageId());
         return messagePack0;
     }
 

@@ -25,17 +25,6 @@ public class WebSocketHeadPackHead implements PackHead, Serializable {
      */
     private String sessionId;
 
-
-    /**
-     * 消息开始时间 前端处理
-     */
-    private Long beginTimestamp;
-
-    /**
-     * 消息唯一标示
-     */
-    private String messageId;
-
     /**
      * 密文
      */
@@ -46,28 +35,12 @@ public class WebSocketHeadPackHead implements PackHead, Serializable {
      */
     private String to;
 
-    public Long getBeginTimestamp() {
-        return beginTimestamp;
-    }
-
-    public void setBeginTimestamp(Long beginTimestamp) {
-        this.beginTimestamp = beginTimestamp;
-    }
-
     public String getCna() {
         return cna;
     }
 
     public void setCna(String cna) {
         this.cna = cna;
-    }
-
-    public String getMessageId() {
-        return messageId;
-    }
-
-    public void setMessageId(String messageId) {
-        this.messageId = messageId;
     }
 
     public String getSessionId() {
@@ -108,9 +81,6 @@ public class WebSocketHeadPackHead implements PackHead, Serializable {
         }
         if (Strings.isNullOrEmpty(sessionId)){
             throw new  RemotingCommandException("非法参数【sessionId】");
-        }
-        if (beginTimestamp==null){
-            throw new  RemotingCommandException("非法参数【beginTimestamp】");
         }
     }
 

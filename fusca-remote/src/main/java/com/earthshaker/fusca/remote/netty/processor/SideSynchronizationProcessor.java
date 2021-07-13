@@ -6,6 +6,7 @@ import cn.hutool.log.LogFactory;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.earthshaker.fusca.remote.RemotingSysResponseCode;
+import com.earthshaker.fusca.remote.constanst.ResponseTypeEnum;
 import com.earthshaker.fusca.remote.netty.bootstrap.AsyncNettyRequestProcessor;
 import com.earthshaker.fusca.remote.netty.bootstrap.ClientChannelInfo;
 import com.earthshaker.fusca.remote.netty.bootstrap.NettyBootStrap;
@@ -40,7 +41,7 @@ public class SideSynchronizationProcessor extends AsyncNettyRequestProcessor {
             if (CollectionUtil.isNotEmpty(sideSynchronizationHead.getExcludeClientIds())){
                 for (ClientChannelInfo clientChannelInfo: clientChannels){
                     if (!sideSynchronizationHead.getExcludeClientIds().contains(clientChannelInfo.getClientId())){
-                        MessagePack messagePack = MessagePack.createResponseCommand(RemotingSysResponseCode.SUCCESS,sideSynchronizationHead,"", request.getResponseType());
+                        MessagePack messagePack = MessagePack.createResponseCommand(RemotingSysResponseCode.SUCCESS,sideSynchronizationHead,"", ResponseTypeEnum.TEXT_WEB_SOCKET_FRAME.getResponseType());
                         messagePack.setBeginTimestamp(request.getBeginTimestamp());
                         messagePack.setBody(request.getBody());
                         messagePack.setVersion(request.getVersion());

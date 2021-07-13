@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <properties>
+        <!--日志路径-->
+        <property name="LOG_HOME">logs</property>
+        <!--日志输出级别 -->
+        <property name="LOG_LEVEL">INFO</property>
+
+        <!--日志输出格式 -->
+        <property name="LOG_PATTERN">%d %p [%t] [%X{trace-id}] %location %m %ex%n</property>
+    </properties>
+
+    <Appenders>
+        <!-- 定义控制台输出 -->
+        <Console name="consoleLog" target="SYSTEM_OUT">
+            <PatternLayout>
+                <Pattern>${LOG_PATTERN}</Pattern>
+            </PatternLayout>
+        </Console>
+
+        <!--INFO日志配置-->
+        <RollingRandomAccessFile name="allLog"
+                                 fileName="${LOG_HOME}/allLog.log"
+                                 filePattern="${LOG_HOME}/allLog.%d{yyyy-MM-dd}-%i.log.gz">
+            <PatternLayout>
+                <Pattern>${LOG_PATTERN}</Pattern>
+            </PatternLayout>
+
+            <Policies>
+                <TimeBasedTriggeringPolicy />
+                <SizeBasedTriggeringPolicy size="100 MB" />
+            </Policies>
+            <DefaultRolloverStrategy max="100" />
+
+            <!-- 只显示INFO级别的信息
+            <Filters>
+                <ThresholdFilter level="INFO" onMatch="ACCEPT" onMismatch="DENY"/>
+            </Filters>-->
+
+        </RollingRandomAccessFile>
+
+        <!--ERROR日志配置-->
+        <RollingRandomAccessFile name="errorLog"
+                                 fileName="${LOG_HOME}/error.log"
+                                 filePattern="${LOG_HOME}/error.%d{yyyy-MM-dd}-%i.log.gz">
+            <PatternLayout>
+                <Pattern>${LOG_PATTERN}</Pattern>
+            </PatternLayout>
+
+            <Policies>
+                <TimeBasedTriggeringPolicy />
+                <SizeBasedTriggeringPolicy size="100 MB" />
+            </Policies>
+            <DefaultRolloverStrategy max="100" />
+
+            <!--只显示ERROR级别的信息-->
+            <Filters>
+                <ThresholdFilter level="ERROR" onMatch="ACCEPT" onMismatch="DENY"/>
+            </Filters>
+        </RollingRandomAccessFile>
+    </Appenders>
+
+    <Loggers>
+        <!--日志级别-->
+        <logger name="org.springframework" level="INFO"/>
+        <logger name="org.mybatis.spring" level="INFO" />
+        <logger name="org.apache.zookeeper" level="INFO" />
+        <logger name="org.apache.dubbo" level="debug" />
+        <logger name="com.joyingbox" level="debug" />
+        <logger name="org.apache.ibatis" level="debug" />
+        <logger name="org.apache.http" level="INFO" />
+
+        <Root level="${LOG_LEVEL}" includeLocation="true">
+            <AppenderRef ref="consoleLog"/>
+            <AppenderRef ref="errorLog"/>
+            <AppenderRef ref="allLog" />
+        </Root>
+    </Loggers>
+</configuration>

@@ -17,10 +17,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-/**
- * @author fulanto
- * @date 2019-02-21
- */
+
 @Slf4j
 @SpringBootApplication
 @EnableTransactionManagement

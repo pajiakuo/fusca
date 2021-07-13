@@ -126,7 +126,7 @@ public class WsClientMangerProcessor implements NettyRequestProcessor {
             insideClientChannelInfoMap = new ConcurrentHashMap<>();
             nettyBootStrap.clientChannelManager.put(nettyBootStrap.WS_OUTSIDE_GROUP,insideClientChannelInfoMap);
         }
-        ClientChannelInfo clientChannelInfo0 = insideClientChannelInfoMap.get(clientChannelInfo.getClientId());
+        ClientChannelInfo clientChannelInfo0 = insideClientChannelInfoMap.get(clientChannelInfo.getChannel());
         if (clientChannelInfo0==null){
             insideClientChannelInfoMap.put(clientChannelInfo.getChannel(),clientChannelInfo);
         }else {

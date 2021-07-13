@@ -341,37 +341,8 @@ public class NettyBootStrap {
 
     }
 
-    public void asyncSendClientMessageToAllServer(MessagePack messagePack){
-        if (CollectionUtil.isNotEmpty(configurationAddrList.get())){
-            for (String address:successAddrList.get()){
-                try {
-                    nettyRemotingClient.invokeAsync(address,messagePack,3000,new InvokeCallback(){
-                        @Override
-                        public void operationComplete(ResponseFuture responseFuture) {
-                            if (!responseFuture.isSendRequestOK()){
-                                log.warn("async send ClientMessage to "+address+" fail"+messagePack.toString());
-                            }else {
-
-                            }
-                        }
-                    });
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (RemotingConnectException e) {
-                    e.printStackTrace();
-                } catch (RemotingTooMuchRequestException e) {
-                    e.printStackTrace();
-                } catch (RemotingTimeoutException e) {
-                    e.printStackTrace();
-                } catch (RemotingSendRequestException e) {
-                    e.printStackTrace();
-                }
-            }
-        }else {
-            log.warn("no server can send async message");
-        }
-
-
+    public AtomicReference<List<String>> getSuccessAddrList() {
+        return successAddrList;
     }
 
     /**

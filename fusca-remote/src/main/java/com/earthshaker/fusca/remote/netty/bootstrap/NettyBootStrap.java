@@ -442,7 +442,7 @@ public class NettyBootStrap {
                     it.remove();
                    // clientChannelTable.remove(info.getClientId());
                     log.warn(
-                            "SCAN: remove expired channel[{}] from ProducerManager groupChannelTable, producer group name: {}",
+                            "SCAN: remove expired channel[{}] from NettyBootStrap.clientChannelManager, producer group name: {}",
                             RemotingHelper.parseChannelRemoteAddr(info.getChannel()), group);
                     NettyChannelUtil.closeChannel(info.getChannel());
                 }

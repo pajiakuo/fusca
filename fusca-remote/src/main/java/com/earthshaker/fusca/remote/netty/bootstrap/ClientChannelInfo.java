@@ -13,13 +13,17 @@ public class ClientChannelInfo  {
 
     private final Channel channel;
     private final String clientId;
+    private final String sessionId;
     private final int version;
     private volatile long lastUpdateTimestamp = System.currentTimeMillis();
+    private final String groupName;
 
-    public ClientChannelInfo(Channel channel ,String clientId,int version){
+    public ClientChannelInfo(Channel channel ,String clientId,int version,String sessionId,String groupName){
         this.channel = channel;
         this.clientId = clientId ;
         this.version = version;
+        this.sessionId = sessionId;
+        this.groupName = groupName;
     }
 
     public Channel getChannel() {
@@ -40,5 +44,13 @@ public class ClientChannelInfo  {
 
     public int getVersion() {
         return version;
+    }
+
+    public String getSessionId() {
+        return sessionId;
+    }
+
+    public String getGroupName() {
+        return groupName;
     }
 }

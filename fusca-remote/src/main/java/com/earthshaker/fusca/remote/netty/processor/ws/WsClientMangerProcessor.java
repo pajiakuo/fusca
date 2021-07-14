@@ -44,7 +44,8 @@ public class WsClientMangerProcessor implements NettyRequestProcessor {
         if (RequestCode.HEART_BEAT_WS==request.getCode()){
             WebSocketHeadPackHead head =
                 JSONObject.parseObject(JSON.toJSONString(request.getHead()),WebSocketHeadPackHead.class);
-            ClientChannelInfo clientChannelInfo = new ClientChannelInfo(ctx.channel(),head.getClientId(),request.getVersion());
+            String groupName = nettyBootStrap.groupName(head.getSource());
+            ClientChannelInfo clientChannelInfo = new ClientChannelInfo(ctx.channel(),head.getClientId(),request.getVersion(),head.getSessionId(),groupName);
             ClientAckPackHead ackPackHead = new ClientAckPackHead();
             ackPackHead.setRemoteAddress(RemotingHelper.parseChannelRemoteAddr(ctx.channel()));
             ackPackHead.setSourceOpaque(request.getOpaque());
@@ -53,18 +54,18 @@ public class WsClientMangerProcessor implements NettyRequestProcessor {
             MessagePack messagePack0 = MessagePack.createResponseCommand(RemotingSysResponseCode.SUCCESS,ackPackHead,null);
             messagePack0.setBody(HEART_BEAT);
             messagePack0.setBeginTimestamp(request.getBeginTimestamp());
-            registerClientChannel(clientChannelInfo,head.getSessionId(),nettyBootStrap.groupName(head.getSource()));
-
+            registerClientChannel(clientChannelInfo,head.getSessionId(),groupName);
             return messagePack0;
         }else if (RequestCode.UNREGISTER_CLIENT_WS==request.getCode()){
             WebSocketHeadPackHead head =
                     JSONObject.parseObject(JSON.toJSONString(request.getHead()),WebSocketHeadPackHead.class);
-                ClientChannelInfo clientChannelInfo = new ClientChannelInfo(
+            String groupName = nettyBootStrap.groupName(head.getSource());
+            ClientChannelInfo clientChannelInfo = new ClientChannelInfo(
                         ctx.channel(),
                         head.getClientId(),
-                        request.getVersion());
+                        request.getVersion(),head.getSessionId(),groupName);
                 //服务下线该客户端
-                unRegisterClientChannel(clientChannelInfo,head.getSessionId(),nettyBootStrap.groupName(head.getSource()));
+                unRegisterClientChannel(clientChannelInfo,head.getSessionId(),groupName);
                 ClientAckPackHead ackPackHead = new ClientAckPackHead();
                 ackPackHead.setRemoteAddress(RemotingHelper.parseChannelRemoteAddr(ctx.channel()));
                 ackPackHead.setSourceOpaque(request.getOpaque());

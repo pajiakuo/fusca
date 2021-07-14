@@ -21,6 +21,7 @@ import com.earthshaker.fusca.remote.netty.processor.ws.WsClientMangerProcessor;
 import com.earthshaker.fusca.remote.netty.processor.ws.WsSendMessageProcessor;
 import com.earthshaker.fusca.remote.netty.util.NettyChannelUtil;
 import com.earthshaker.fusca.remote.netty.util.RemotingHelper;
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import io.netty.channel.Channel;
@@ -78,7 +79,7 @@ public class NettyBootStrap {
     private final String clientId;
 
     /**
-     *  key 代表group
+     *  key 代表group （ws 相关，内部的不在其中）
      *  二级 客户/游客/op sessionId 与 ClientChannelInfo集合 关系
      */
     private  ConcurrentHashMap<String,ConcurrentHashMap<String,List<ClientChannelInfo>>> groupClientChannelMap = new ConcurrentHashMap<>();
@@ -88,7 +89,7 @@ public class NettyBootStrap {
     private Map<String,String> opRelationMap = Maps.newHashMap();
 
     /**
-     * 新跳上传地址
+     * 新跳上传地址 包含ws 、内部
      * key 是组的意思 channel 使用时需要判断状态
      */
     public final ConcurrentHashMap<String, ConcurrentHashMap<Channel, ClientChannelInfo>> clientChannelManager = new ConcurrentHashMap<>();
@@ -285,10 +286,11 @@ public class NettyBootStrap {
         unRegisterClient();
         //关闭 server连接的客户端/ws-server连接的客户端
         closeClientChannelManagerChannel();
+        clientChannelManager.clear();
         nettyRemotingWebSocketServer.shutdown();
         nettyRemotingServer.shutdown();
         nettyRemotingClient.shutdown();
-
+        groupClientChannelMap.clear();
         failAddrList.set(configurationAddrList.get());
     }
 
@@ -442,12 +444,33 @@ public class NettyBootStrap {
                     it.remove();
                    // clientChannelTable.remove(info.getClientId());
                     log.warn(
-                            "SCAN: remove expired channel[{}] from NettyBootStrap.clientChannelManager, producer group name: {}",
+                            "SCAN: remove expired channel[{}] from NettyBootStrap.clientChannelManager,  group name: {}",
                             RemotingHelper.parseChannelRemoteAddr(info.getChannel()), group);
                     NettyChannelUtil.closeChannel(info.getChannel());
+                    if (Strings.isNullOrEmpty(info.getGroupName())){
+                        continue;
+                    }else {
+                        ConcurrentHashMap<String,List<ClientChannelInfo>> sessionClientMap = groupClientChannelMap.get(info.getGroupName());
+                        if (CollectionUtil.isNotEmpty(sessionClientMap)){
+                            List<ClientChannelInfo> clientChannelInfoList = sessionClientMap.get(info.getSessionId());
+                            if (CollectionUtil.isNotEmpty(clientChannelInfoList)){
+                                Iterator<ClientChannelInfo> iterator =  clientChannelInfoList.iterator();
+                                while (iterator.hasNext()){
+                                    ClientChannelInfo itNext = iterator.next();
+                                    if (itNext.getClientId().equals(info.getClientId())){
+                                        iterator.remove();
+                                        break;
+                                    }
+                                }
+
+                            }
+                        }
+                    }
                 }
             }
+            log.warn("当前链接数《《《《《《《  group :{} num: {}",group,entry.getValue().size());
         }
+
 
     }
 

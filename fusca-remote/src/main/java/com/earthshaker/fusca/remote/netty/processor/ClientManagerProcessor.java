@@ -38,7 +38,7 @@ public class    ClientManagerProcessor implements NettyRequestProcessor {
         if (RequestCode.HEART_BEAT==request.getCode()){
             if (request.getHead() instanceof ClientManagerRequestPackHead){
                 ClientManagerRequestPackHead head = (ClientManagerRequestPackHead) request.getHead();
-                ClientChannelInfo clientChannelInfo = new ClientChannelInfo(ctx.channel(),head.getClientID(),request.getVersion());
+                ClientChannelInfo clientChannelInfo = new ClientChannelInfo(ctx.channel(),head.getClientID(),request.getVersion(),head.getClientID(),"");
                 ClientAckPackHead ackPackHead = new ClientAckPackHead();
                 ackPackHead.setRemoteAddress(RemotingHelper.parseChannelRemoteAddr(ctx.channel()));
                 ackPackHead.setSourceOpaque(request.getOpaque());
@@ -58,7 +58,7 @@ public class    ClientManagerProcessor implements NettyRequestProcessor {
                 ClientChannelInfo clientChannelInfo = new ClientChannelInfo(
                         ctx.channel(),
                         head.getClientID(),
-                        request.getVersion());
+                        request.getVersion(),head.getClientID(),"");
                 //服务下线该客户端
                 unRegisterClientChannel(clientChannelInfo);
                 ClientAckPackHead ackPackHead = new ClientAckPackHead();
